@@ -1,4 +1,4 @@
-# of-vscode-project-generator-rs
+# openFrameworks VSCode Project Generator (for static analysis only)
 
 [![Crates.io](https://img.shields.io/crates/v/of-vscode-project-generator-rs)](https://crates.io/crates/of-vscode-project-generator-rs)
 [![Docs.rs](https://docs.rs/of-vscode-project-generator-rs/badge.svg)](https://docs.rs/of-vscode-project-generator-rs)
@@ -7,6 +7,8 @@
 Code suggestion            |  Static analysis (and AI etc...)
 :-------------------------:|:-------------------------:
 ![screenshot1](./docs/screenshot1.png)  |  ![screenshot2](./docs/screenshot2.png)
+
+***NOTE***: This tool is NOT official one of openFrameworks.
 
 openFrameworks project generator for Visual Studio Code. (Rust ported version of [original bash version](https://github.com/funatsufumiya/of-vscode-project-generator))
 
