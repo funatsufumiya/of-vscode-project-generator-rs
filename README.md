@@ -6,7 +6,7 @@
 
 openFrameworks project generator for Visual Studio Code. (Rust ported version of [original bash version](https://github.com/funatsufumiya/of-vscode-project-generator))
 
-(only for syntax-highlighting and intellisense. Not for building or debug.)
+(only for static code analysis like syntax-highlighting, definition jumping or intellisense. Not for building or debug.)
 
 ## Usage
 
