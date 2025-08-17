@@ -4,6 +4,10 @@
 [![Docs.rs](https://docs.rs/of-vscode-project-generator-rs/badge.svg)](https://docs.rs/of-vscode-project-generator-rs)
 [![License](https://img.shields.io/crates/l/of-vscode-project-generator-rs)](LICENSE)
 
+Code suggestion            |  Static analysis (and AI etc...)
+:-------------------------:|:-------------------------:
+![screenshot1](./docs/screenshot1.png)  |  ![screenshot2](./docs/screenshot2.png)
+
 openFrameworks project generator for Visual Studio Code. (Rust ported version of [original bash version](https://github.com/funatsufumiya/of-vscode-project-generator))
 
 (only for static code analysis like syntax-highlighting, definition jumping or intellisense. Not for building or debug.)
