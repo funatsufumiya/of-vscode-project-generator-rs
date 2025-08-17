@@ -10,7 +10,7 @@ use argparse::{ArgumentParser, Store, StoreTrue};
 use serde_json::{json, Value};
 use log::{info, warn, debug};
 
-const VERSION: &str = "0.0.6";
+const VERSION: &str = "0.0.0";
 const MAC_SDK_ROOT: &str = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk";
 
 // static GLOBAL_CONFIG: Lazy<Mutex<Config>> = Lazy::new(|| Mutex::new(Config::default()));
