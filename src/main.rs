@@ -25,8 +25,8 @@ struct Config {
 
 struct ExcludePattern {
     pattern: PathBuf,
-    has_wildcard: bool,      // % で終わるか
-    has_dir_wildcard: bool,  // /% で終わるか
+    has_wildcard: bool,
+    has_dir_wildcard: bool,
 }
 
 impl ExcludePattern {
@@ -373,7 +373,6 @@ fn is_excluded_dir(dir_abs: &Path, excludes: &[ExcludePattern]) -> bool {
         let exclude_str = exclude.pattern.to_string_lossy();
         
         if exclude.has_dir_wildcard {
-            // /% パターン: ディレクトリとその配下すべてを除外
             let prefix = exclude_str.as_ref();
             if dir_str.starts_with(prefix) {
                 info!("excluded {} (dir wildcard {}/%)", dir_str, prefix);
@@ -381,7 +380,6 @@ fn is_excluded_dir(dir_abs: &Path, excludes: &[ExcludePattern]) -> bool {
             }
         }
         else if exclude.has_wildcard {
-            // % パターン: プレフィックスマッチ
             let prefix = exclude_str.as_ref();
             if dir_str.starts_with(prefix) {
                 info!("excluded {} (wildcard {}%)", dir_str, prefix);
@@ -389,7 +387,6 @@ fn is_excluded_dir(dir_abs: &Path, excludes: &[ExcludePattern]) -> bool {
             }
         }
         else {
-            // 通常パターン: 完全一致
             if dir_str == exclude_str {
                 info!("excluded {} (exact match {})", dir_str, exclude_str);
                 return true;
