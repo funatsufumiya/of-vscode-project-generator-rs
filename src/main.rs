@@ -8,6 +8,7 @@ use std::collections::HashSet;
 use argparse::{ArgumentParser, Store, StoreTrue};
 // use once_cell::sync::Lazy;
 use serde_json::{json, Value};
+use log::{info, warn, debug};
 
 const VERSION: &str = "0.0.6";
 const MAC_SDK_ROOT: &str = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk";
@@ -20,6 +21,24 @@ struct Config {
     // debug: bool,
     show_version: bool,
     ignore_excludes: bool,
+}
+
+struct ExcludePattern {
+    pattern: PathBuf,
+    has_wildcard: bool,      // % で終わるか
+    has_dir_wildcard: bool,  // /% で終わるか
+}
+
+impl ExcludePattern {
+    fn pattern_str(&self) -> String {
+        let mut pattern = self.pattern.to_string_lossy().to_string();
+        if self.has_dir_wildcard {
+            pattern.push_str("/%");
+        } else if self.has_wildcard {
+            pattern.push('%');
+        }
+        pattern
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -71,6 +90,8 @@ fn main() -> io::Result<()> {
             .add_option(&["-i", "--ignore-excludes"], StoreTrue, "Ignore excludes");
         parser.parse_args_or_exit();
     }
+
+    env_logger::init();
 
     if config.show_version {
         print!("of-vscode-project-generator-rs {}", VERSION);
@@ -138,7 +159,8 @@ fn main() -> io::Result<()> {
     }
 
     // Validate OF root directory
-    let of_root = proj_path.join("../../..");
+    let of_root = resolve_path(proj_path.join("../../..").as_path());
+
     if !of_root.join("apps").exists() {
         eprintln!("[Error] '{}' is not OF root. Stops.", of_root.display());
         process::exit(1);
@@ -154,6 +176,7 @@ fn main() -> io::Result<()> {
 
     // Add OF paths
     include_paths.insert(of_root.join("libs/openFrameworks").to_string_lossy().to_string());
+    include_paths.insert(format!("{}/libs/openFrameworks/**", of_root.display()));
     
     // Add library paths
     let libs_path = of_root.join("libs");
@@ -163,7 +186,9 @@ fn main() -> io::Result<()> {
             let path = entry.path();
             if path.is_dir() && path.file_name().unwrap() != "openFrameworks" {
                 if path.join("include").exists() {
-                    include_paths.insert(path.join("include").to_string_lossy().to_string());
+                    let include_path = path.join("include");
+                    include_paths.insert(include_path.to_string_lossy().to_string());
+                    include_paths.insert(format!("{}/**", include_path.display()));
                 }
             }
         }
@@ -276,12 +301,15 @@ fn main() -> io::Result<()> {
 
 fn add_directories_recursively(
     dir: &Path,
-    excludes: &[PathBuf],
+    excludes: &[ExcludePattern],
     include_paths: &mut HashSet<String>
 ) -> io::Result<()> {
+    let dir_str = dir.to_string_lossy().to_string();
     if !is_excluded_dir(dir, excludes) {
-        include_paths.insert(dir.to_string_lossy().to_string());
-        
+        include_paths.insert(dir_str);
+    }
+    
+    if dir.is_dir() {
         for entry in fs::read_dir(dir)? {
             let entry = entry?;
             let path = entry.path();
@@ -293,9 +321,7 @@ fn add_directories_recursively(
     Ok(())
 }
 
-// ...existing code for parse_addon_excludes and is_excluded_dir...
-
-fn parse_addon_excludes(addon_path: &Path) -> Vec<PathBuf> {
+fn parse_addon_excludes(addon_path: &Path) -> Vec<ExcludePattern> {
     let config_path = addon_path.join("addon_config.mk");
     let mut excludes = Vec::new();
 
@@ -315,33 +341,62 @@ fn parse_addon_excludes(addon_path: &Path) -> Vec<PathBuf> {
         }
 
         if line.starts_with("ADDON_SOURCES_EXCLUDE") || line.starts_with("ADDON_INCLUDES_EXCLUDE") {
-            let parts: Vec<&str> = line.splitn(2, ['=', '+']).collect();
-            if parts.len() == 2 {
-                let pattern = parts[1].trim().replace("%", "");
-                if !pattern.is_empty() && pattern != "=" {
-                    excludes.push(addon_path.join(&pattern));
+            let parts: Vec<&str> = line.split(['=', '+']).collect();
+            if parts.len() >= 2 {
+                let pattern = parts.last().unwrap().trim();
+                if !pattern.is_empty() {
+                    let has_dir_wildcard = pattern.ends_with("/%");
+                    let has_wildcard = pattern.ends_with('%');
+                    let clean_pattern = pattern.trim_end_matches("/%").trim_end_matches('%');
+                    excludes.push(ExcludePattern {
+                        pattern: addon_path.join(clean_pattern),
+                        has_wildcard,
+                        has_dir_wildcard,
+                    });
                 }
             }
         }
     }
-
+    
+    debug!("excludes: {}", excludes.iter()
+        .map(|e| e.pattern_str())
+        .collect::<Vec<_>>()
+        .join(", "));
     excludes
 }
 
-fn is_excluded_dir(dir_abs: &Path, excludes: &[PathBuf]) -> bool {
+fn is_excluded_dir(dir_abs: &Path, excludes: &[ExcludePattern]) -> bool {
+    let dir_str = dir_abs.to_string_lossy();
+    
     for exclude in excludes {
-        let exclude_str = exclude.to_string_lossy();
-        let dir_str = dir_abs.to_string_lossy();
-
-        if exclude_str.ends_with('*') {
-            let prefix = exclude_str.trim_end_matches('*');
+        let exclude_str = exclude.pattern.to_string_lossy();
+        
+        if exclude.has_dir_wildcard {
+            // /% パターン: ディレクトリとその配下すべてを除外
+            let prefix = exclude_str.as_ref();
             if dir_str.starts_with(prefix) {
+                info!("excluded {} (dir wildcard {}/%)", dir_str, prefix);
                 return true;
             }
-        } else if dir_str == exclude_str {
-            return true;
+        }
+        else if exclude.has_wildcard {
+            // % パターン: プレフィックスマッチ
+            let prefix = exclude_str.as_ref();
+            if dir_str.starts_with(prefix) {
+                info!("excluded {} (wildcard {}%)", dir_str, prefix);
+                return true;
+            }
+        }
+        else {
+            // 通常パターン: 完全一致
+            if dir_str == exclude_str {
+                info!("excluded {} (exact match {})", dir_str, exclude_str);
+                return true;
+            }
         }
     }
+    
+    debug!("not excluded {:?}", dir_abs);
     false
 }
 
