@@ -1,6 +1,8 @@
 # of-vscode-project-generator-rs
 
-[![Latest Version](https://img.shields.io/github/tag/funatsufumiya/of-vscode-project-generator-rs.svg?style=flat-square)](https://github.com/funatsufumiya/of-vscode-project-generator-rs/tags)
+[![Crates.io](https://img.shields.io/crates/v/of-vscode-project-generator-rs)](https://crates.io/crates/of-vscode-project-generator-rs)
+[![Docs.rs](https://docs.rs/of-vscode-project-generator-rs/badge.svg)](https://docs.rs/of-vscode-project-generator-rs)
+[![License](https://img.shields.io/crates/l/of-vscode-project-generator-rs)](LICENSE)
 
 openFrameworks project generator for Visual Studio Code. (Rust ported version of [original bash version](https://github.com/funatsufumiya/of-vscode-project-generator))
 

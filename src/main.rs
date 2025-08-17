@@ -10,7 +10,7 @@ use argparse::{ArgumentParser, Store, StoreTrue};
 use serde_json::{json, Value};
 use log::{info, warn, debug};
 
-const VERSION: &str = "0.1.0";
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MAC_SDK_ROOT: &str = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk";
 
 // static GLOBAL_CONFIG: Lazy<Mutex<Config>> = Lazy::new(|| Mutex::new(Config::default()));
@@ -76,7 +76,7 @@ fn main() -> io::Result<()> {
     let mut config = Config::default();
     
     {
-        let desc = format!("openFrameworks VSCode Project Generator (for static analysis only) {}", VERSION);
+        let desc = format!("openFrameworks VSCode Project Generator (for static analysis only) v{}", VERSION);
         let mut parser = ArgumentParser::new();
         parser.set_description(&desc);
         parser.refer(&mut config.path)
@@ -94,7 +94,7 @@ fn main() -> io::Result<()> {
     env_logger::init();
 
     if config.show_version {
-        print!("of-vscode-project-generator-rs {}", VERSION);
+        print!("of-vscode-project-generator-rs v{}", VERSION);
         process::exit(0);
     }
 
