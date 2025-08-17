@@ -24,6 +24,12 @@ $ cd of-vscode-project-generator
 $ cargo install --path .
 ```
 
+## Uninstall
+
+```bash
+$ cargo uninstall of-vscode-project-generator-rs
+```
+
 ## Limitations
 
 - This script loads some of `addon_config.mk` incompletedly (and not load `config.make`). If you need more, please modify `.vscode/c_cpp_properties.json` manually after running this script.

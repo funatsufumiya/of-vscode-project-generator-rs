@@ -128,7 +128,7 @@ fn main() -> io::Result<()> {
     }
     
     println!("[Info] OS: {}", os.to_str());
-    println!("[Info] project path: '{}'", proj_path.display());
+    println!("[Info] project path: '{}'", normalize_windows_path(proj_path.to_str().unwrap()));
 
     // Project validation
     if !proj_path.join("src").join("ofApp.h").exists() {
@@ -219,7 +219,7 @@ fn main() -> io::Result<()> {
                     process::exit(1);
                 });
 
-            println!("[Info] Checking '{}'", addon_path.display());
+            println!("[Info] Checking '{}'", normalize_windows_path(addon_path.to_str().unwrap()));
 
             let excludes = if !config.ignore_excludes {
                 parse_addon_excludes(&addon_path)
@@ -295,7 +295,7 @@ fn main() -> io::Result<()> {
     write!(file, "{}", serde_json::to_string_pretty(&config)?)?;
 
     println!("[Info] Done!");
-    println!("[Info] Saved to '{}/.vscode/c_cpp_properties.json' :)", proj_path.display());
+    println!("[Info] Saved to '{}/.vscode/c_cpp_properties.json' :)", normalize_windows_path(proj_path.to_str().unwrap()));
 
     Ok(())
 }
@@ -403,7 +403,12 @@ fn is_excluded_dir(dir_abs: &Path, excludes: &[ExcludePattern]) -> bool {
 
 fn resolve_path(path: &Path) -> PathBuf {
     if path.exists() {
-        std::fs::canonicalize(path).unwrap()
+        let canonical = std::fs::canonicalize(path).unwrap();
+        if cfg!(target_os = "windows") {
+            PathBuf::from(normalize_windows_path(canonical.to_str().unwrap()))
+        } else {
+            canonical
+        }
     } else {
         eprintln!("[Error] '{}' doesn't exist. Stops.", path.display());
         process::exit(1);
@@ -413,8 +418,25 @@ fn resolve_path(path: &Path) -> PathBuf {
 fn resolve_path_or_ignore(path_str: &str) -> String {
     let path = Path::new(path_str);
     if path.exists() {
-        std::fs::canonicalize(path).unwrap().to_str().unwrap().to_string()
+        let canonical = std::fs::canonicalize(path).unwrap();
+        if cfg!(target_os = "windows") {
+            normalize_windows_path(canonical.to_str().unwrap())
+        } else {
+            canonical.to_str().unwrap().to_string()
+        }
     } else {
         path_str.to_string()
     }
+}
+
+fn normalize_windows_path(path_str: &str) -> String {
+    let mut result = path_str.to_string();
+    
+    if result.starts_with("\\\\?\\") {
+        result = result[4..].to_string();
+    }
+    
+    result = result.replace('\\', "/");
+    
+    result
 }
