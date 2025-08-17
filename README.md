@@ -33,7 +33,7 @@ $ cargo install --path .
 
 ## Note
 
-Code port from bash into Rust is mainly done by GitHub Copilot.
+Code port from bash into Rust is mainly done by GitHub Copilot.<br>
 Already tested well, but use with care.
 
 ## License
