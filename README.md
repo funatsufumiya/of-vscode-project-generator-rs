@@ -21,8 +21,14 @@ $ of-vscode-project-generator-rs .
 ## Install
 
 ```bash
-$ git clone https://github.com/funatsufumiya/of-vscode-project-generator
-$ cd of-vscode-project-generator
+$ cargo install of-vscode-project-generator-rs
+```
+
+or nightly (directly from github):
+
+```bash
+$ git clone https://github.com/funatsufumiya/of-vscode-project-generator-rs
+$ cd of-vscode-project-generator-rs
 $ cargo install --path .
 ```
 
