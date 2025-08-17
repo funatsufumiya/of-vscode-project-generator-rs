@@ -30,3 +30,7 @@ $ cargo install --path .
 
 - This script loads some of `addon_config.mk` incompletedly (and not load `config.make`). If you need more, please modify `.vscode/c_cpp_properties.json` manually after running this script.
 - This script exports environment-dependent settings. So I recommend NOT to include `.vscode` directory in your git repository.
+
+## License
+
+WTFPL or 0BSD
