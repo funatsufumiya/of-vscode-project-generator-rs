@@ -3,16 +3,22 @@ use std::fs::{self, File};
 use std::io::{self, Write, BufRead, BufReader};
 use std::process;
 use std::collections::HashSet;
+// use std::sync::atomic::{AtomicBool, Ordering};
+// use std::sync::Mutex;
 use argparse::{ArgumentParser, Store, StoreTrue};
+// use once_cell::sync::Lazy;
 use serde_json::{json, Value};
 
 const VERSION: &str = "0.0.6";
 const MAC_SDK_ROOT: &str = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk";
 
+// static GLOBAL_CONFIG: Lazy<Mutex<Config>> = Lazy::new(|| Mutex::new(Config::default()));
+
 #[derive(Default)]
 struct Config {
     path: String,
-    debug: bool,
+    // debug: bool,
+    show_version: bool,
     ignore_excludes: bool,
 }
 
@@ -51,20 +57,35 @@ fn main() -> io::Result<()> {
     let mut config = Config::default();
     
     {
+        let desc = format!("openFrameworks VSCode Project Generator {}", VERSION);
         let mut parser = ArgumentParser::new();
-        parser.set_description("openFrameworks VSCode Project Generator");
+        parser.set_description(&desc);
         parser.refer(&mut config.path)
             .add_argument("path", Store, "Project path")
             .required();
-        parser.refer(&mut config.debug)
-            .add_option(&["-d", "--debug"], StoreTrue, "Enable debug output");
+        // parser.refer(&mut config.debug)
+        //     .add_option(&["-d", "--debug"], StoreTrue, "Enable debug output");
+        parser.refer(&mut config.show_version)
+            .add_option(&["-v", "--version"], StoreTrue, "Show version");
         parser.refer(&mut config.ignore_excludes)
             .add_option(&["-i", "--ignore-excludes"], StoreTrue, "Ignore excludes");
         parser.parse_args_or_exit();
     }
 
+    if config.show_version {
+        print!("of-vscode-project-generator-rs {}", VERSION);
+        process::exit(0);
+    }
+
+    // {
+    //     let mut g = GLOBAL_CONFIG.lock().unwrap();
+    //     g.debug = config.debug;
+    //     g.path = config.path.clone();
+    //     g.ignore_excludes = config.ignore_excludes;
+    // }
+
     println!("\n======================================");
-    println!("   of-vscode-project-generator v{}", VERSION);
+    println!("   of-vscode-project-generator-rs v{}", VERSION);
     println!("======================================\n");
 
     let proj_path = PathBuf::from(&config.path);
