@@ -10,7 +10,7 @@ Code suggestion            |  Static analysis (and AI etc...)
 
 ***NOTE***: This tool is NOT official one of openFrameworks.
 
-openFrameworks project generator for Visual Studio Code. (Rust ported version of [original bash version](https://github.com/funatsufumiya/of-vscode-project-generator))
+openFrameworks project generator for Visual Studio Code. (Rust ported from [bash version](https://github.com/funatsufumiya/of-vscode-project-generator))
 
 (only for static code analysis like syntax-highlighting, definition jumping or intellisense. Not for building or debug.)
 
