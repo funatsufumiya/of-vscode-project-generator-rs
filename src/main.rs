@@ -76,7 +76,7 @@ fn main() -> io::Result<()> {
     let mut config = Config::default();
     
     {
-        let desc = format!("openFrameworks VSCode Project Generator {}", VERSION);
+        let desc = format!("openFrameworks VSCode Project Generator (for static analysis only) {}", VERSION);
         let mut parser = ArgumentParser::new();
         parser.set_description(&desc);
         parser.refer(&mut config.path)
@@ -105,9 +105,9 @@ fn main() -> io::Result<()> {
     //     g.ignore_excludes = config.ignore_excludes;
     // }
 
-    println!("\n======================================");
+    println!("\n============================================");
     println!("   of-vscode-project-generator-rs v{}", VERSION);
-    println!("======================================\n");
+    println!("============================================\n");
 
     let proj_path = PathBuf::from(&config.path);
     if !proj_path.exists() {
