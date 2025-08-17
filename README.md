@@ -1,5 +1,7 @@
 # of-vscode-project-generator-rs
 
+WIP, Experimental
+
 [![Latest Version](https://img.shields.io/github/tag/funatsufumiya/of-vscode-project-generator-rs.svg?style=flat-square)](https://github.com/funatsufumiya/of-vscode-project-generator-rs/tags)
 
 openFrameworks project generator for Visual Studio Code. (Rust ported version of [original bash version](https://github.com/funatsufumiya/of-vscode-project-generator))
