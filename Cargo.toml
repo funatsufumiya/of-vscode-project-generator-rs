@@ -1,0 +1,8 @@
+[package]
+name = "of-vscode-project-generator-rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+argparse = "0.2.2"
+serde_json = "1.0.142"
