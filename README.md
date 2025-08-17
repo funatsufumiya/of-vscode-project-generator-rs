@@ -44,7 +44,7 @@ $ cargo uninstall of-vscode-project-generator-rs
 
 ## Limitations
 
-- This tool loads some of `addon_config.mk` incompletedly (and not load `config.make`). If you need more, please modify `.vscode/c_cpp_properties.json` manually after running this script.
+- This tool loads some part of each `addon_config.mk` incompletedly (and not load `config.make`). If you need more, please modify `.vscode/c_cpp_properties.json` manually after running this script.
 - This tool exports environment-dependent settings. So I recommend NOT to include `.vscode` directory in your git repository.
 
 ## Note
