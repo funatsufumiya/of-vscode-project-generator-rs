@@ -10,7 +10,7 @@ use argparse::{ArgumentParser, Store, StoreTrue};
 use serde_json::{json, Value};
 use log::{info, warn, debug};
 
-const VERSION: &str = "0.0.0";
+const VERSION: &str = "0.1.0";
 const MAC_SDK_ROOT: &str = "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk";
 
 // static GLOBAL_CONFIG: Lazy<Mutex<Config>> = Lazy::new(|| Mutex::new(Config::default()));
@@ -243,6 +243,7 @@ fn main() -> io::Result<()> {
                             add_directories_recursively(&lib_path.join("src"), &excludes, &mut include_paths)?;
                         }
                         if lib_path.join("include").exists() {
+                            include_paths.insert(lib_path.join("include").to_string_lossy().to_string());
                             add_directories_recursively(&lib_path.join("include"), &excludes, &mut include_paths)?;
                         }
                     }
