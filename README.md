@@ -38,6 +38,8 @@ $ cd of-vscode-project-generator-rs
 $ cargo install --path .
 ```
 
+and you also need to install [C/C++ for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools).
+
 ## Uninstall
 
 ```bash
