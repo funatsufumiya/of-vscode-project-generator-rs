@@ -333,7 +333,7 @@ fn parse_addon_excludes(addon_path: &Path) -> Vec<ExcludePattern> {
     let file = File::open(config_path).unwrap();
     let reader = BufReader::new(file);
 
-    // Track current section (e.g., linux, macosx, windows, etc.)
+    // Track current section (e.g., linux, osx, vs, etc.)
     let mut current_section: Option<String> = None;
     let os = OS::current();
 
@@ -345,7 +345,7 @@ fn parse_addon_excludes(addon_path: &Path) -> Vec<ExcludePattern> {
             continue;
         }
 
-        // Section header: e.g. linux:, macosx:, windows:
+        // Section header: e.g. linux:, osx:, vs:
         if line.ends_with(":") && !line.contains(' ') && !line.contains('=') {
             current_section = Some(line.trim_end_matches(':').to_string());
             continue;
