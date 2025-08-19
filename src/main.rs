@@ -333,12 +333,35 @@ fn parse_addon_excludes(addon_path: &Path) -> Vec<ExcludePattern> {
     let file = File::open(config_path).unwrap();
     let reader = BufReader::new(file);
 
+    // Track current section (e.g., linux, macosx, windows, etc.)
+    let mut current_section: Option<String> = None;
+    let os = OS::current();
+
     for line in reader.lines() {
         let line = line.unwrap();
         let line = line.trim();
         
         if line.is_empty() || line.starts_with('#') {
             continue;
+        }
+
+        // Section header: e.g. linux:, macosx:, windows:
+        if line.ends_with(":") && !line.contains(' ') && !line.contains('=') {
+            current_section = Some(line.trim_end_matches(':').to_string());
+            continue;
+        }
+
+        // If in a linux* section, skip on Mac/Windows
+        if let Some(ref section) = current_section {
+            if section.starts_with("linux") && os != OS::Linux {
+                continue;
+            }
+            if (section.starts_with("osx") || section.starts_with("ios")) && os != OS::Mac {
+                continue;
+            }
+            if (section.starts_with("vs") || section.starts_with("msys2")) && os != OS::Windows {
+                continue;
+            }
         }
 
         if line.starts_with("ADDON_SOURCES_EXCLUDE") || line.starts_with("ADDON_INCLUDES_EXCLUDE") {
