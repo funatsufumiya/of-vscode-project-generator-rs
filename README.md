@@ -1,8 +1,8 @@
 # openFrameworks VSCode Project Generator (for static analysis only)
 
-[![Crates.io](https://img.shields.io/crates/v/of-vscode-project-generator-rs)](https://crates.io/crates/of-vscode-project-generator-rs)
-[![Docs.rs](https://docs.rs/of-vscode-project-generator-rs/badge.svg)](https://docs.rs/of-vscode-project-generator-rs)
-[![License](https://img.shields.io/crates/l/of-vscode-project-generator-rs)](LICENSE)
+[![Crates.io](https://img.shields.io/crates/v/of-vscode-project-generator-rs?v2)](https://crates.io/crates/of-vscode-project-generator-rs)
+[![Docs.rs](https://docs.rs/of-vscode-project-generator-rs/badge.svg?v2)](https://docs.rs/of-vscode-project-generator-rs)
+[![License](https://img.shields.io/crates/l/of-vscode-project-generator-rs?v2)](LICENSE)
 
 Code suggestion            |  Static analysis (and AI etc...)
 :-------------------------:|:-------------------------:
